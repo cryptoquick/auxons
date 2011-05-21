@@ -1,4 +1,9 @@
 function Init () {
+
+	var canvasElement = document.getElementById("sceneCanvas");
+	canvasElement.setAttribute("height", window.innerHeight);
+	canvasElement.setAttribute("width", window.innerWidth);
+
 	var initTime0 = new Date();
 	
 	window.$C = new Common();
@@ -11,19 +16,18 @@ function Init () {
 		}
 	});
 
-	SceneJS.withNode("auxons").render();
+	SceneJS.createNode(mainScene);
 	
-	MainScene.start({
-		fps: 60,
-		idleFunc: $C.MainLoop
-	});
+        var testbox = new Structure("testBox");
+	testbox.make("mainNode");
 	
+        SceneJS.withNode("auxons").render();
+
 	var initTime1 = new Date();
 	
 	console.log("Scene took " + (initTime1 - initTime0) + "ms to initialize");
 	
-	var testbox = new Structure("testBox");
-	testbox.make("mainNode");
+
 }
 
 var Structure = function (name) {
@@ -72,8 +76,8 @@ var Structure = function (name) {
 					specular:		0.9,
 					shine: 			0.9,
 					nodes: [{
-						type: "node",
-						id: id + "_node"
+						type: "instance",
+                                                target: _id
 					}]
 				}]
 			}]

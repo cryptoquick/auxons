@@ -2,20 +2,14 @@
 <head>
     <title>Auxons</title>
 	<link rel="stylesheet" href="static/styles.css" type="text/css">
-</head>
-<body onload="Init()">
-	<canvas id="sceneCanvas"></canvas>
-	
-	<script type="text/javascript">
-		var canvasElement = document.getElementById("sceneCanvas");
-		canvasElement.setAttribute("height", window.innerHeight);
-		canvasElement.setAttribute("width", window.innerWidth);
-	</script>
-	
 	<script type="text/javascript" src="static/lib/scenejs.js"></script>
 	<script type="text/javascript" src="static/scene.js"></script>
 	<script type="text/javascript" src="static/input.js"></script>
 	<script type="text/javascript" src="static/common.js"></script>
 	<script type="text/javascript" src="static/main.js"></script>
+
+</head>
+<body onload="Init()">
+	<canvas id="sceneCanvas" />
 </body>
 </html>
