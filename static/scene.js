@@ -98,6 +98,10 @@ var Scene = function () {
 						}]
 					}]
 				}]
+			},
+			{
+				type: "node",
+				id: "libs"
 			}]
 		});
 		

@@ -11,12 +11,12 @@ var Structure = function (name) {
 	this.make = function (target) {
 		this.target = target;
 		this.mat = this.material(this.target);
-		this.obj = this.create(this.mat);
-		this.instance = this.inst(this.obj);
+		this.obj = this.create();
+		this.instance = this.inst(this.mat, this.obj);
 	};
 	
 	this.create = function (_id) {
-		var id = _id + "_cube";
+		var id = "blaCube";
 		/*
 		SceneJS.Message.sendMessage({
 			command: "create",
@@ -31,16 +31,22 @@ var Structure = function (name) {
 		});*/
 		
 		var newNode = {
-			type: "node",
-			parent: _id,
-			id: id,
-			nodes: [{
-				type: "box"
-			}]
+			type: "box",
+			id: id
 		};
 		
-		$C.scene.addNode(newNode, _id);
-		return id;
+		SceneJS.createNode({
+			type: "library",
+			parent: "libs",
+			id: "blaCube",
+			nodes: [{
+				type: "box",
+				id: id
+			}]
+		})
+		
+	//	$C.scene.addNode(newNode, _id);
+		return newNode;
 	};
 	
 	this.material = function (_id) {
@@ -73,7 +79,7 @@ var Structure = function (name) {
 		return id;
 	};
 	
-	this.inst = function (_id) {
+	this.inst = function (_id, parent) {
 		var id = _id + "_inst";
 		/*
 		SceneJS.Message.sendMessage({
@@ -87,10 +93,10 @@ var Structure = function (name) {
 		});*/
 		
 		var newNode = {
-			parent: _id,
 			type: "instance",
+			parent: _id,
 			id: id,
-			target: _id
+			target: "blaCube"
 		};
 		
 		$C.scene.addNode(newNode, _id);
