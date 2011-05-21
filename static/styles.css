@@ -1,5 +1,29 @@
 body, html {
 	margin: 0px;
+	padding: 0px;
+	background-color: #777;
+	font-family: Verdana;
+	font-size: 25px;
+	font-weight: bold;
 }
+
+#sceneCanvas {
+	border: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+#paused {
+	visibility: hidden;
+	position: absolute;
+	width: 200px;
+	height: 40px;
+	text-align: center;
+	vertical-align: middle;
+	top: 0px;
+	left: 0px;
+	color: red;
+}
+
 ::selection { background: transparent; }
 ::-moz-selection { background: transparent; }
