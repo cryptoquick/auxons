@@ -60,11 +60,11 @@ var Mouse = function () {
 	}
 	
 	this.wheel = function (evt) {
-		var scale = evt.wheelDelta * -0.00005;
-		
-		if (scale + $C.scene.scale > 0.01 && scale + $C.scene.scale < 0.10) {
-			$C.scene.scale += scale;
-			$C.ui.resize();
+		if (evt.wheelDelta > 0) {
+			$C.scene.zoom(true);
+		}
+		else {
+			$C.scene.zoom(false);
 		}
 	}
 }

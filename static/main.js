@@ -20,7 +20,7 @@ function Init () {
 	$C.state = new State();
 	
 	// Add event listeners.
-	document.onresize = $C.ui.resize;
+	window.onresize = $C.ui.resize;
 	document.onmousedown = $C.mouse.down;
 	document.onmouseup = $C.mouse.up;
 	document.onmousemove = $C.mouse.move;
@@ -35,8 +35,8 @@ function Init () {
 	$C.initialized = true;
 	
 	var initTime1 = new Date();
-	console.log("Scene took " + (initTime1 - initTime0) + "ms to initialize");
+	console.log("Scene took " + (initTime1 - initTime0) + "ms to initialize.");
 	
-	var struct = new Structure("mainNode");
+	var struct = new Structure("box", "blaBox");
 	struct.make("buildRoot");
 }

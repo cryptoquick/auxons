@@ -4,6 +4,9 @@ var Scene = function () {
 	this.scale = 0.05;
 	this.scene = "mainScene";
 	this.cam = "mainCamera";
+	this.zoomNode = "mainScale";
+	this.zoomCurr = 1.0;
+	this.zoomIncr = 0.2;
 	this.initialized = true;
 	
 	this.init = function () {
@@ -53,45 +56,37 @@ var Scene = function () {
 						dir: {x: 1.0, y: 1.0, z: 1.0}
 					},
 					{
-						type: "material",
-						baseColor: {r: 0.9, g: 0.9, b: 0.9},
+						type: "rotate",
+						id: "pitch",
+						angle: -26.565,
+						x: 1.0,
 						nodes: [{
-							type: "cube",
-							xSize: 200,
-							ySize: 200,
-							zSize: 200,
+							type: "rotate",
+							id: "yaw",
+							angle: 225.0,
+							y: 1.0,
 							nodes: [{
 								type: "rotate",
-								id: "pitch",
-								angle: -26.565,
-								x: 1.0,
+								id: "roll",
+								angle: 0.0,
+								z: 1.0,
 								nodes: [{
-									type: "rotate",
-									id: "yaw",
-									angle: 225.0,
+									type: "scale",
+									id: "mainScale",
+									x: 1.0,
 									y: 1.0,
+									z: 1.0,
 									nodes: [{
-										type: "rotate",
-										id: "roll",
-										angle: 0.0,
-										z: 1.0,
-										nodes: [{
-											type: "selector",
-											id: "root",
-											selection: [0,1],
-											nodes: [{
-												type: "node",
-												id: "gridRoot"
-											},
-											{
-												type: "node",
-												id: "buildRoot"
-											},
-											{
-												type: "node",
-												id: "uiRoot"
-											}]
-										}]
+										type: "node",
+										id: "gridRoot"
+									},
+									{
+										type: "node",
+										id: "buildRoot"
+									},
+									{
+										type: "node",
+										id: "uiRoot"
 									}]
 								}]
 							}]
@@ -137,7 +132,7 @@ var Scene = function () {
 			bottom : -height * this.scale,
 			top : height * this.scale,
 			near : 0.1,
-			far : 1000.0
+			far : 100.0
 		});
 	}
 	
@@ -147,5 +142,16 @@ var Scene = function () {
 	
 	this.addNodes = function (nodes, target) {
 		SceneJS.withNode(target).add("nodes", nodes);
+	}
+	
+	this.zoom = function (zoomIn) {
+		if (zoomIn) {
+			var zoom = this.zoomIncr;
+			SceneJS.withNode(this.zoomNode).inc({ x: zoom, y: zoom, z: zoom });
+		}
+		else {
+			var zoom = -this.zoomIncr;
+			SceneJS.withNode(this.zoomNode).inc({ x: zoom, y: zoom, z: zoom });
+		}
 	}
 }
