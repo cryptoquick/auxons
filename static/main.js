@@ -28,8 +28,8 @@ function Init () {
 	document.onkeydown = $C.key.press;
 	
 	// Initialize Game.
-//	$C.game = new Game();
-//	$C.game.init();
+	$C.game = new Game();
+	$C.game.init();
 	
 	$C.initialized = true;
 	$C.ui.resize();
