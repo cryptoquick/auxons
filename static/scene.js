@@ -132,7 +132,7 @@ var Scene = function () {
 			bottom : -height * this.scale,
 			top : height * this.scale,
 			near : 0.1,
-			far : 100.0
+			far : 1000.0
 		});
 	}
 	

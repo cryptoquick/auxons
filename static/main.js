@@ -7,7 +7,6 @@ function Init () {
 	// Initialize User Interface.
 	$C.ui = new UI();
 	$C.ui.init();
-	$C.ui.resize();
 	
 	// Make main scene.
 	$C.scene = new Scene();
@@ -33,6 +32,7 @@ function Init () {
 //	$C.game.init();
 	
 	$C.initialized = true;
+	$C.ui.resize();
 	
 	var initTime1 = new Date();
 	console.log("Scene took " + (initTime1 - initTime0) + "ms to initialize.");
