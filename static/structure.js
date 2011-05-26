@@ -13,10 +13,10 @@ var Structure = function (model, id) {
 			nodes: [{
 				type:			"material",
 				id: this.id,
-				baseColor:		{ r: 1.0, g: 1.0, b: 0.0 },
-				specularColor:	{ r: 1.0, g: 1.0, b: 0.0 }, 
-				specular:		0.9,
-				shine:			0.9,
+				baseColor:		{ r: 0.9, g: 0.9, b: 0.0 },
+				specularColor:	{ r: 0.1, g: 0.9, b: 0.0 }, 
+				specular:		0.1,
+				shine:			0.1,
 				nodes: [{
 					type: "scale",
 					x: 4.0,
