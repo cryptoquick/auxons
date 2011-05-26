@@ -1,5 +1,5 @@
 var Scene = function () {
-	this.yaw = 225.0;
+	this.yaw = 0.0;
 	this.pitch = 26.565;
 	this.scale = 0.05;
 	this.scene = "mainScene";
@@ -8,6 +8,7 @@ var Scene = function () {
 	this.zoomCurr = 1.0;
 	this.zoomIncr = 0.2;
 	this.initialized = true;
+	this.translate = {x: 0.0, y: 0.0, z: 0.0};
 	
 	this.init = function () {
 		SceneJS.createNode({
@@ -63,7 +64,7 @@ var Scene = function () {
 						nodes: [{
 							type: "rotate",
 							id: "yaw",
-							angle: 225.0,
+							angle: 0.0,
 							y: 1.0,
 							nodes: [{
 								type: "rotate",
@@ -77,16 +78,23 @@ var Scene = function () {
 									y: 1.0,
 									z: 1.0,
 									nodes: [{
-										type: "node",
-										id: "gridRoot"
-									},
-									{
-										type: "node",
-										id: "buildRoot"
-									},
-									{
-										type: "node",
-										id: "uiRoot"
+										type: "translate",
+										id: "mainTrans",
+										x: 0.0,
+										y: 0.0,
+										z: 0.0,
+										nodes: [{
+											type: "node",
+											id: "gridRoot"
+										},
+										{
+											type: "node",
+											id: "buildRoot"
+										},
+										{
+											type: "node",
+											id: "uiRoot"
+										}]
 									}]
 								}]
 							}]
@@ -122,6 +130,10 @@ var Scene = function () {
 		SceneJS.withNode("yaw").set("angle", rx);
 		SceneJS.withNode("pitch").set("angle", ry);
 		SceneJS.withNode("roll").set("angle", rz);
+	}
+	
+	this.translate = function (tx, ty, tz) {
+		SceneJS.withNode("mainTrans").set("xyz", {x: tx, y: ty, z: tz});
 	}
 	
 	this.camera = function (width, height) {

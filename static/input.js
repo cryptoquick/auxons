@@ -44,7 +44,7 @@ var Mouse = function () {
 	}
 	
 	this.move = function (evt) {
-		if (this.dragging) {
+		if (this.dragging && evt.ctrlKey) {
 			var yaw = (evt.clientX - this.last.x) * 0.5;
 			var pitch = (evt.clientY - this.last.y) * 0.5;
 			
@@ -56,6 +56,11 @@ var Mouse = function () {
 			
 			this.last.x = evt.clientX;
 			this.last.y = evt.clientY;
+		}
+		else if (this.dragging && !evt.ctrlKey) {
+			var horz = (evt.clientX - this.last.x) * 0.25;
+			var vert = (evt.clientY - this.last.y) * 0.25;
+			$C.scene.translate(horz, 0.0, -vert);
 		}
 	}
 	
