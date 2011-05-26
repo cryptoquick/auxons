@@ -28,12 +28,6 @@ var Terrain = function () {
 		this.makeVertices();
 		this.makeIndices();
 	//	this.makeUVs();
-	        console.log(this.vertices);
-                console.log(this.uv);
-                console.log(this.indices);
-                console.log(this.vertices.length / 3);
-                console.log(this.uv.length);
-                console.log(this.indices.length);
 		this.makeObject();
 		this.addObject();
 	}
