@@ -10,6 +10,7 @@ var Game = function () {
 var Terrain = function () {
 	this.width = 0;
 	this.height = 0;
+	this.offset = 0;
 	this.map = [];
 	this.vertices = [];
 	this.indices = [];
@@ -20,6 +21,7 @@ var Terrain = function () {
 	this.init = function (width, height) {
 		this.width = width;
 		this.height = height;
+		this.offset = -Math.floor(this.width / 2);
 		
 		this.makeMap();
 		
@@ -32,18 +34,17 @@ var Terrain = function () {
 	}
 	
 	this.makeMap = function () {
-		for (var x = 0; x < this.width; x++) {
-			this.map.push(new Array());
-			for (var y = 0; y < this.height; y++) {
-			//	this.map[x].push(Math.random());
-				this.map[x].push(0.0);
+		for (var x = this.offset; x < this.width + this.offset; x++) {
+			this.map[x] = new Array();
+			for (var y = this.offset; y < this.height + this.offset; y++) {
+				this.map[x][y] = Math.random();
 			}
 		}
 	}
 	
 	this.makeVertices = function () {
-		for (var row = 0; row < this.height; row++) {
-			for (var col = 0; col < this.width; col++) {
+		for (var row = this.offset; row < this.height + this.offset; row++) {
+			for (var col = this.offset; col < this.width + this.offset; col++) {
 				this.vertices.push(col);
 				this.vertices.push(this.map[row][col]);
 				this.vertices.push(row);
