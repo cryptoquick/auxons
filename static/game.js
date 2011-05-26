@@ -28,23 +28,28 @@ var Terrain = function () {
 		this.makeVertices();
 		this.makeIndices();
 	//	this.makeUVs();
-		
+	        console.log(this.vertices);
+                console.log(this.uv);
+                console.log(this.indices);
+                console.log(this.vertices.length / 3);
+                console.log(this.uv.length);
+                console.log(this.indices.length);
 		this.makeObject();
 		this.addObject();
 	}
 	
 	this.makeMap = function () {
-		for (var x = this.offset; x < this.width + this.offset; x++) {
+		for (var x = 0; x <= this.width; x++) {
 			this.map[x] = new Array();
-			for (var y = this.offset; y < this.height + this.offset; y++) {
+			for (var y = 0; y <= this.height; y++) {
 				this.map[x][y] = Math.random();
 			}
 		}
 	}
 	
 	this.makeVertices = function () {
-		for (var row = this.offset; row < this.height + this.offset; row++) {
-			for (var col = this.offset; col < this.width + this.offset; col++) {
+		for (var row = 0; row < this.height; row++) {
+			for (var col = 0; col < this.width; col++) {
 				this.vertices.push(col);
 				this.vertices.push(this.map[row][col]);
 				this.vertices.push(row);
@@ -54,22 +59,23 @@ var Terrain = function () {
 	}
 	
 	this.makeIndices = function () {
-		for (var row = 0; row < this.height - 1; row++) {
-			if (row % 2 == 0) { // Even rows
-				for (col = 0; col < this.width; col++) {
-					this.indices.push(col + row * this.width);
-					this.indices.push(col + (row + 1) * this.width);
-					this.uv.push(0,0,0,0);
-				}
-			}
-			else { // Odd rows
-				for (col = this.width - 1; col > 0; col--) {
-					this.indices.push(col + (row + 1) * this.width);
-					this.indices.push((col - 1) + row * this.width);
-					this.uv.push(5,5,5,5);
-				}
-			}
-		}
+		for (var row = 0; row < (this.height - 1); row++) {
+                  if(row%2 == 0) 
+                    for (var col = 0; col < this.width; col++) {
+                      this.indices.push(row * this.width + col);
+                      this.uv.push(0,0);
+                      this.indices.push((row+ 1) * this.width + col);
+                      this.uv.push(0,0);
+                    }
+                  else {
+                    for (var col = this.width-1; col >= 0; col--) {
+                      this.indices.push(row * this.width + col);
+                      this.uv.push(5,5);
+                      this.indices.push((row+1) * this.width + col);
+                      this.uv.push(5,5);
+                    }
+                  }
+                }
 	}
 	
 /*	this.makeUVs = function () {
