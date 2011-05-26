@@ -48,8 +48,8 @@ var Terrain = function () {
 	}
 	
 	this.makeVertices = function () {
-		for (var row = 0; row < this.height; row++) {
-			for (var col = 0; col < this.width; col++) {
+		for (var row = 0; row <= this.height; row++) {
+			for (var col = 0; col <= this.width; col++) {
 				this.vertices.push(col);
 				this.vertices.push(this.map[row][col]);
 				this.vertices.push(row);
@@ -59,19 +59,20 @@ var Terrain = function () {
 	}
 	
 	this.makeIndices = function () {
-		for (var row = 0; row < (this.height - 1); row++) {
+                var wpo = this.width+1;
+		for (var row = 0; row < this.height; row++) {
                   if(row%2 == 0) 
-                    for (var col = 0; col < this.width; col++) {
-                      this.indices.push(row * this.width + col);
+                    for (var col = 0; col <= this.width; col++) {
+                      this.indices.push(row * wpo + col);
                       this.uv.push(0,0);
-                      this.indices.push((row+ 1) * this.width + col);
+                      this.indices.push((row+ 1) * wpo + col);
                       this.uv.push(0,0);
                     }
                   else {
-                    for (var col = this.width-1; col >= 0; col--) {
-                      this.indices.push(row * this.width + col);
+                    for (var col = this.width; col >= 0; col--) {
+                      this.indices.push(row * wpo + col);
                       this.uv.push(5,5);
-                      this.indices.push((row+1) * this.width + col);
+                      this.indices.push((row+1) * wpo + col);
                       this.uv.push(5,5);
                     }
                   }
