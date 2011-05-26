@@ -37,6 +37,6 @@ function Init () {
 	var initTime1 = new Date();
 	console.log("Scene took " + (initTime1 - initTime0) + "ms to initialize.");
 	
-	var struct = new Structure("box", "blaBox");
-	struct.make("buildRoot");
+//	var struct = new Structure("box", "blaBox");
+//	struct.make("buildRoot");
 }

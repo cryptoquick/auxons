@@ -58,7 +58,7 @@ var Scene = function () {
 					{
 						type: "rotate",
 						id: "pitch",
-						angle: -26.565,
+						angle: 90.0, //-26.565,
 						x: 1.0,
 						nodes: [{
 							type: "rotate",
