@@ -3,7 +3,7 @@ var Game = function () {
 	
 	this.init = function () {
 		this.terrain = new Terrain();
-		this.terrain.init(8, 8);
+		this.terrain.init(16, 16);
 	}
 }
 
@@ -16,6 +16,7 @@ var Terrain = function () {
 	this.indices = [];
 	this.normals = [];
 	this.uv = [];
+	this.uvSize = 2;
 	this.obj;
 	
 	this.init = function (width, height) {
@@ -27,9 +28,9 @@ var Terrain = function () {
 		
 		this.makeVertices();
 		this.makeIndices();
-	//	this.makeUVs();
 		this.makeObject();
 		this.addObject();
+		this.centerObject();
 	}
 	
 	this.makeMap = function () {
@@ -41,46 +42,47 @@ var Terrain = function () {
 		}
 	}
 	
+	// Calculates normals, but unsure if this is the proper way to do it.
+	this.calcNormal = function (x, y, z) {
+		n = {x: 0.0, y: 0.0, z: 0.0};
+		n.x = y * z - z * y;
+		n.y = z * x - x * z;
+		n.z = x * y - y * x;
+		return n;
+	}
+	
 	this.makeVertices = function () {
 		for (var row = 0; row <= this.height; row++) {
 			for (var col = 0; col <= this.width; col++) {
-				this.vertices.push(col);
-				this.vertices.push(this.map[row][col]);
-				this.vertices.push(row);
-				this.normals.push(1, 1, 1);
+				var v = {x: col, y: this.map[row][col], z: row};
+				this.vertices.push(v.x, v.y, v.z);
+				var n = this.calcNormal(v.x, v.y, v.z);
+				this.normals.push(n.x, n.y, n.z); // Change into a proper normals calculation.
 			}
 		}
 	}
 	
 	this.makeIndices = function () {
-                var wpo = this.width+1;
+		var wpo = this.width+1;
 		for (var row = 0; row < this.height; row++) {
-                  if(row%2 == 0) 
-                    for (var col = 0; col <= this.width; col++) {
-                      this.indices.push(row * wpo + col);
-                      this.uv.push(0,0);
-                      this.indices.push((row+ 1) * wpo + col);
-                      this.uv.push(0,0);
-                    }
-                  else {
-                    for (var col = this.width; col >= 0; col--) {
-                      this.indices.push(row * wpo + col);
-                      this.uv.push(5,5);
-                      this.indices.push((row+1) * wpo + col);
-                      this.uv.push(5,5);
-                    }
-                  }
-                }
-	}
-	
-/*	this.makeUVs = function () {
-		for (var row = 0; row < this.height; row++) {
-			for (var col = 0; col < this.width; col++) {
-				this.uv.push(0);
-				this.uv.push(5);
+			if(row % 2 == 0) {
+				for (var col = 0; col <= this.width; col++) {
+					this.indices.push(row * wpo + col);
+					this.uv.push(0,0);
+					this.indices.push((row+ 1) * wpo + col);
+					this.uv.push(0,0);
+				}
+			}
+			else {
+				for (var col = this.width; col >= 0; col--) {
+					this.indices.push(row * wpo + col);
+					this.uv.push(this.uvSize, this.uvSize);
+					this.indices.push((row+1) * wpo + col);
+					this.uv.push(this.uvSize, this.uvSize);
+				}
 			}
 		}
-	}*/
+	}
 	
 	this.makeObject = function () {
 		this.obj = {
@@ -105,11 +107,11 @@ var Terrain = function () {
 					flipY: false,
 					width: 1,
 					height: 1,
-					internalFormat:"lequal",
-					sourceFormat:"alpha",
-					sourceType: "unsignedByte",
-					applyTo:"baseColor",
-					blendMode: "multiply"
+					internalFormat:	"lequal",
+					sourceFormat:	"alpha",
+					sourceType:		"unsignedByte",
+					applyTo:		"baseColor",
+					blendMode:		"multiply"
 				}],
 				nodes: [{
 					type: "scale",
@@ -117,12 +119,19 @@ var Terrain = function () {
 					y: 4.0,
 					z: 4.0,
 					nodes: [{
-						type: "geometry",
-						primitive: "triangle-strip",
-						positions: this.vertices,
-						normals: this.normals,
-						uv: this.uv,
-						indices: this.indices
+						type: "translate",
+						id: "terrainMove",
+						x: 0.0,
+						y: 0.0,
+						z: 0.0,
+						nodes: [{
+							type: "geometry",
+							primitive: "triangle-strip",
+							positions: this.vertices,
+							normals: this.normals,
+							uv: this.uv,
+							indices: this.indices
+						}]
 					}]
 				}]
 			}]
@@ -131,5 +140,9 @@ var Terrain = function () {
 	
 	this.addObject = function () {
 		$C.scene.addNode(this.obj, "gridRoot");
+	}
+	
+	this.centerObject = function () {
+		SceneJS.withNode("terrainMove").set({x: -this.width / 2, y: 0.0, z: -this.height / 2});
 	}
 }
