@@ -30,6 +30,7 @@ body, html {
 	top: 10px;
 	left: 10px;
 	color: red;
+	font-size: 12px;
 }
 
 ::selection { background: transparent; }

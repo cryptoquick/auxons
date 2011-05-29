@@ -34,27 +34,14 @@ var Scene = function () {
 					},
 					nodes: [{
 						type: "light",
-						mode: "dir",
+						mode: "point",
 						color: {r: 0.9, g: 0.9, b: 0.9},
 						diffuse: true,
-						specular: false,
-						dir: {x: 1.0, y: 1.0, z: -1.0}
-					},
-					{
-						type: "light",
-						mode: "dir",
-						color: {r: 0.9, g: 0.9, b: 0.9},
-						diffuse: true,
-						specular: false,
-						dir: {x: -1.0, y: -1.0, z: -1.0}
-					},
-					{
-						type: "light",
-						mode: "dir",
-						color: {r: 0.9, g: 0.9, b: 0.9},
-						diffuse: true,
-						specular: false,
-						dir: {x: 1.0, y: 1.0, z: 1.0}
+						specular: true,
+						pos: {x: 0.0, y: -1.0, z: 0.0},
+						constantAttenuation: 1.0,
+						linearAttenuation: 0.0,
+						quadraticAttenuation: 0.0
 					},
 					{
 						type: "translate",
