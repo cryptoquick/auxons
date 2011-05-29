@@ -107,14 +107,12 @@ var Scene = function () {
 				id: "libs"
 			}]
 		});
-		
-		// Renderer.
-		this.start();
 	}
 	
 	this.start = function () {
 		SceneJS.withNode(this.scene).start({
-			fps: 30
+			fps: 30,
+			idleFunc: $C.ui.calcFps
 		});
 	}
 	

@@ -34,6 +34,8 @@ function Init () {
 	$C.initialized = true;
 	$C.ui.resize();
 	
+	$C.scene.start();
+	
 	var initTime1 = new Date();
 	console.log("Scene took " + (initTime1 - initTime0) + "ms to initialize.");
 	

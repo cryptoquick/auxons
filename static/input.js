@@ -30,6 +30,8 @@ var Mouse = function () {
 	this.last = {x: null, y: null};
 	this.dragging = false;
 	this.clicked = false;
+	this.horz = 0.0;
+	this.vert = 0.0;
 	
 	this.down = function (evt) {
 		this.last = {x: evt.clientX, y: evt.clientY};
@@ -58,9 +60,10 @@ var Mouse = function () {
 			this.last.y = evt.clientY;
 		}
 		else if (this.dragging && !evt.ctrlKey) {
-			var horz = (evt.clientX - this.last.x) * 0.25;
-			var vert = (evt.clientY - this.last.y) * 0.25;
-			$C.scene.translate(horz, 0.0, -vert);
+			this.horz = (evt.clientX - this.last.x) * 0.25;
+			this.vert = (evt.clientY - this.last.y) * 0.25;
+		//	console.log(this.horz + ((evt.clientX - this.last.x) * 0.25));
+			$C.scene.translate(this.horz, 0.0, -this.vert);
 		}
 	}
 	

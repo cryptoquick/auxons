@@ -2,10 +2,13 @@ var UI = function () {
 	this.window = {};
 	this.canvas;
 	this.toolbar;
+	this.date;
+	this.fpsCounter = document.getElementById("fps");
 	
 	this.init = function () {
 		this.window = {width: window.innerWidth, height: window.innerHeight};
 		this.canvas = document.getElementById($C.canvas);
+		this.date = new Date();
 	}
 	
 	this.postInit = function () {
@@ -26,6 +29,24 @@ var UI = function () {
 		}
 		
 		console.log("Resized.");
+	}
+	
+	this.frameCount = 0;
+	this.fps = 0;
+	
+	this.calcFps = function () {
+		var date = new Date();
+		if ($C.ui.date != undefined) {
+			if (date.getSeconds() > $C.ui.date.getSeconds()) {
+				$C.ui.date = date;
+				$C.ui.fps = $C.ui.frameCount;
+				$C.ui.frameCount = 0;
+				$C.ui.fpsCounter.innerText = "FPS: " + $C.ui.fps;
+			}
+			else {
+				$C.ui.frameCount++;
+			}
+		}
 	}
 }
 
