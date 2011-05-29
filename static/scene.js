@@ -33,23 +33,44 @@ var Scene = function () {
 						far : 1000.0
 					},
 					nodes: [{
-						type: "light",
-						mode: "point",
-						color: {r: 0.9, g: 0.9, b: 0.9},
-						diffuse: true,
-						specular: true,
-						pos: {x: 0.0, y: -1.0, z: 0.0},
-						constantAttenuation: 1.0,
-						linearAttenuation: 0.0,
-						quadraticAttenuation: 0.0
-					},
-					{
 						type: "translate",
 						id: "mainTrans",
 						x: 0.0,
 						y: 0.0,
 						z: 0.0,
 						nodes: [{
+							type: "light",
+							mode: "dir",
+							color: {r: 0.9, g: 0.9, b: 0.9},
+							diffuse: true,
+							specular: true,
+							dir: {x: -1.0, y: -1.0, z: -1.0}
+						},
+						{
+							type: "light",
+							mode: "dir",
+							color: {r: 0.9, g: 0.9, b: 0.9},
+							diffuse: true,
+							specular: true,
+							dir: {x: 1.0, y: 1.0, z: 1.0}
+						},
+						{
+							type: "light",
+							mode: "dir",
+							color: {r: 0.9, g: 0.9, b: 0.9},
+							diffuse: true,
+							specular: true,
+							dir: {x: -1.0, y: 0.0, z: 1.0}
+						},
+						{
+							type: "light",
+							mode: "dir",
+							color: {r: 0.9, g: 0.9, b: 0.9},
+							diffuse: true,
+							specular: true,
+							dir: {x: 1.0, y: 0.0, z: -1.0}
+						},
+						{
 							type: "rotate",
 							id: "pitch",
 							angle: -26.565,
@@ -71,7 +92,6 @@ var Scene = function () {
 										y: 1.0,
 										z: 1.0,
 										nodes: [{
-										
 											type: "node",
 											id: "gridRoot"
 										},
