@@ -60,10 +60,11 @@ var Mouse = function () {
 			this.last.y = evt.clientY;
 		}
 		else if (this.dragging && !evt.ctrlKey) {
-			this.horz = (evt.clientX - this.last.x) * 0.25;
-			this.vert = (evt.clientY - this.last.y) * 0.25;
-		//	console.log(this.horz + ((evt.clientX - this.last.x) * 0.25));
-			$C.scene.translate(this.horz, 0.0, -this.vert);
+			$C.scene.translation.x += (evt.clientX - this.last.x) * 0.05;
+			$C.scene.translation.y += (evt.clientY - this.last.y) * 0.05;
+			$C.scene.translate($C.scene.translation.x, $C.scene.translation.y, 0.0);
+			this.last.x = evt.clientX;
+			this.last.y = evt.clientY;
 		}
 	}
 	

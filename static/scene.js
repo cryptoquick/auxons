@@ -1,5 +1,5 @@
 var Scene = function () {
-	this.yaw = 0.0;
+	this.yaw = 45.0;
 	this.pitch = 26.565;
 	this.scale = 0.05;
 	this.scene = "mainScene";
@@ -8,7 +8,7 @@ var Scene = function () {
 	this.zoomCurr = 1.0;
 	this.zoomIncr = 0.2;
 	this.initialized = true;
-	this.translate = {x: 0.0, y: 0.0, z: 0.0};
+	this.translation = {x: 0.0, y: 0.0, z: 0.0};
 	
 	this.init = function () {
 		SceneJS.createNode({
@@ -57,33 +57,34 @@ var Scene = function () {
 						dir: {x: 1.0, y: 1.0, z: 1.0}
 					},
 					{
-						type: "rotate",
-						id: "pitch",
-						angle: 90.0, //-26.565,
-						x: 1.0,
+						type: "translate",
+						id: "mainTrans",
+						x: 0.0,
+						y: 0.0,
+						z: 0.0,
 						nodes: [{
 							type: "rotate",
-							id: "yaw",
-							angle: 0.0,
-							y: 1.0,
+							id: "pitch",
+							angle: -26.565,
+							x: 1.0,
 							nodes: [{
 								type: "rotate",
-								id: "roll",
-								angle: 0.0,
-								z: 1.0,
+								id: "yaw",
+								angle: 45.0,
+								y: 1.0,
 								nodes: [{
-									type: "scale",
-									id: "mainScale",
-									x: 1.0,
-									y: 1.0,
+									type: "rotate",
+									id: "roll",
+									angle: 0.0,
 									z: 1.0,
 									nodes: [{
-										type: "translate",
-										id: "mainTrans",
-										x: 0.0,
-										y: 0.0,
-										z: 0.0,
+										type: "scale",
+										id: "mainScale",
+										x: 1.0,
+										y: 1.0,
+										z: 1.0,
 										nodes: [{
+										
 											type: "node",
 											id: "gridRoot"
 										},
