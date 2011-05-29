@@ -1,9 +1,33 @@
 var Game = function () {
 	this.terrain;
+	this.edges;
+	this.lastPos = {x: 0.0, y: 0.0};
 	
 	this.init = function () {
 		this.terrain = new Terrain();
 		this.terrain.init(16, 16);
+	}
+	
+	this.getPos = function () {
+		var results;
+		var query = new SceneJS.utils.query.QueryNodePos({
+			canvasWidth: $C.ui.window.width,
+			canvasHeight: $C.ui.window.height
+		});
+		query.execute({ nodeId: "terrain0" },
+		function(theQuery) {
+			results = theQuery.getResults();
+		});
+		return results;
+	}
+	
+	this.move = function () {
+		var pos = $C.game.getPos();
+		if ((pos.canvasPos.x != $C.game.lastPos.x) || (pos.canvasPos.y != $C.game.lastPos.y)) {
+			console.log("Terrain center is now: " + pos.canvasPos.x + ", " + pos.canvasPos.y);
+			$C.game.lastPos.x = pos.canvasPos.x;
+			$C.game.lastPos.y = pos.canvasPos.y;
+		}
 	}
 }
 

@@ -120,7 +120,7 @@ var Scene = function () {
 	this.start = function () {
 		SceneJS.withNode(this.scene).start({
 			fps: 30,
-			idleFunc: $C.ui.calcFps
+			idleFunc: $C.process
 		});
 	}
 	

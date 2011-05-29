@@ -34,6 +34,11 @@ function Init () {
 	$C.initialized = true;
 	$C.ui.resize();
 	
+	$C.process = function () {
+		$C.ui.calcFps();
+		$C.game.move();
+	}
+	
 	$C.scene.start();
 	
 	var initTime1 = new Date();
