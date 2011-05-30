@@ -1,32 +1,116 @@
 var Game = function () {
-	this.terrain;
-	this.edges;
+	this.init = function () {
+		$C.grid = new Grid();
+		$C.grid.init();
+	}
+}
+
+var Grid = function () {
+	this.terrains = {};
+	this.curIndex = 0;
+	this.terrainSize = {rows: 16, cols: 16};
 	this.lastPos = {x: 0.0, y: 0.0};
 	
 	this.init = function () {
-		this.terrain = new Terrain();
-		this.terrain.init(16, 16);
+		this.addTerrain(0,0);
+		this.populateTerrain(0,0);
 	}
 	
-	this.getPos = function () {
+	this.getPos = function (tx, tz) {
 		var results;
 		var query = new SceneJS.utils.query.QueryNodePos({
 			canvasWidth: $C.ui.window.width,
 			canvasHeight: $C.ui.window.height
 		});
-		query.execute({ nodeId: "terrain0" },
+		query.execute({ nodeId: this.nameTerrain(tx, tz) },
 		function(theQuery) {
 			results = theQuery.getResults();
 		});
-		return results;
+		return results.canvasPos;
 	}
 	
-	this.move = function () {
-		var pos = $C.game.getPos();
-		if ((pos.canvasPos.x != $C.game.lastPos.x) || (pos.canvasPos.y != $C.game.lastPos.y)) {
-			console.log("Terrain center is now: " + pos.canvasPos.x + ", " + pos.canvasPos.y);
-			$C.game.lastPos.x = pos.canvasPos.x;
-			$C.game.lastPos.y = pos.canvasPos.y;
+	this.onMove = function () {
+		var pos = $C.grid.getPos(0,0);
+		if ((pos.x != $C.grid.lastPos.x) || (pos.y != $C.grid.lastPos.y)) {
+		//	console.log("Terrain center is now: " + pos.x + ", " + pos.y);
+			$C.grid.lastPos.x = pos.x;
+			$C.grid.lastPos.y = pos.y;
+		}
+	}
+	
+	this.newTerrain = function (tx, tz) {
+		var name = this.nameTerrain(tx, tz);
+		var t = new Terrain();
+		t.init(this.terrainSize.rows, this.terrainSize.cols, tx, tz, name);
+		this.terrains[name] = t;
+	}
+	
+	this.nameTerrain = function (x, z) {
+		return "x" + x + "z" + z;
+	}
+	
+	this.gridCoors = function (gridX, gridY) {
+		var x = gridX * this.terrainSize.rows;
+		var y = gridY * this.terrainSize.cols;
+		return {x: x, y: y};
+	}
+	
+	this.populateTerrain = function (selfX, selfY) {
+		// Upper Right
+		var ur = this.addTerrain(selfX - 1, selfY);
+		if(ur != false) {
+			this.checkDir(ur, selfX - 1, selfY);
+		};
+		
+		// Upper Left
+		var ul = this.addTerrain(selfX, selfY + 1);
+		if(ul != false) {
+			this.checkDir(ul, selfX, selfY + 1);
+		}
+		
+		// Lower Right
+		var lr = this.addTerrain(selfX, selfY - 1);
+		if(lr != false) {
+			this.checkDir(lr, selfX, selfY - 1);
+		}
+		
+		// Lower Left
+		var ll = this.addTerrain(selfX + 1, selfY);
+		if(ll != false) {
+			this.checkDir(ll, selfX + 1, selfY);
+		}
+	}
+	
+	this.checkExists = function (coorsX, coorsY) {
+		var name = this.nameTerrain(coorsX, coorsY);
+		
+		if (this.terrains[name] == undefined) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	this.checkDir = function (dirPos, dirX, dirY) {
+		var coors = this.gridCoors(dirX, dirY);
+	//	if (!this.checkExists(coors.x, coors.y)) {
+			if ((dirPos.x > 0.0 && dirPos.x < $C.ui.window.width) &&
+				(dirPos.y > 0.0 && dirPos.y < $C.ui.window.height)) {
+				this.populateTerrain(dirX, dirY);
+			}
+	//	}
+	}
+	
+	this.addTerrain = function (gridX, gridY) {
+		var coors = this.gridCoors(gridX, gridY);
+		if (!this.checkExists(coors.x, coors.y)) {
+			this.newTerrain(coors.x, coors.y);
+			var terrainCoors = this.getPos(coors.x, coors.y);
+			return terrainCoors;
+		}
+		else {
+			return false;
 		}
 	}
 }
@@ -34,7 +118,7 @@ var Game = function () {
 var Terrain = function () {
 	this.width = 0;
 	this.height = 0;
-	this.offset = 0;
+	this.offset = {x: 0.0, y: 0.0, z: 0.0};
 	this.map = [];
 	this.vertices = [];
 	this.indices = [];
@@ -42,11 +126,14 @@ var Terrain = function () {
 	this.uv = [];
 	this.uvSize = 2;
 	this.obj;
+	this.nodeID = "";
 	
-	this.init = function (width, height) {
+	this.init = function (width, height, offsetX, offsetZ, name) {
 		this.width = width;
 		this.height = height;
-		this.offset = -Math.floor(this.width / 2);
+		this.offset.x = offsetX;
+		this.offset.z = offsetZ;
+		this.nodeID = name;
 		
 		this.makeMap();
 		
@@ -110,54 +197,18 @@ var Terrain = function () {
 	
 	this.makeObject = function () {
 		this.obj = {
-			type: "material",
-			id: "terrain0",
-			baseColor:		{ r: 0.7, g: 0.2, b: 0.2 },
-			specularColor:	{ r: 0.4, g: 0.4, b: 0.4 }, 
-			specular:		0.9,
-			shine:			0.5,
+			type: "translate",
+			id: this.nodeID,
+			x: this.offset.x,
+			y: this.offset.y,
+			z: this.offset.z,
 			nodes: [{
-				type: "texture",
-				layers: [{
-					uri: "static/img/grid128.png",
-					minFilter: "linear",
-					magFilter: "linear",
-					wrapS: "repeat",
-					wrapT: "repeat",
-					isDepth: false,
-					depthMode:"luminance",
-					depthCompareMode: "compareRToTexture",
-					depthCompareFunc: "lequal",
-					flipY: false,
-					width: 1,
-					height: 1,
-					internalFormat:	"lequal",
-					sourceFormat:	"alpha",
-					sourceType:		"unsignedByte",
-					applyTo:		"baseColor",
-					blendMode:		"multiply"
-				}],
-				nodes: [{
-					type: "scale",
-					x: 4.0,
-					y: 4.0,
-					z: 4.0,
-					nodes: [{
-						type: "translate",
-						id: "terrainMove",
-						x: 0.0,
-						y: 0.0,
-						z: 0.0,
-						nodes: [{
-							type: "geometry",
-							primitive: "triangle-strip",
-							positions: this.vertices,
-							normals: this.normals,
-							uv: this.uv,
-							indices: this.indices
-						}]
-					}]
-				}]
+				type: "geometry",
+				primitive: "triangle-strip",
+				positions: this.vertices,
+				normals: this.normals,
+				uv: this.uv,
+				indices: this.indices
 			}]
 		}
 	}
@@ -167,6 +218,6 @@ var Terrain = function () {
 	}
 	
 	this.centerObject = function () {
-		SceneJS.withNode("terrainMove").set({x: -this.width / 2, y: 0.0, z: -this.height / 2});
+		SceneJS.withNode(this.nodeID).set({x: -this.width / 2 + this.offset.x, y: this.offset.y, z: -this.height / 2 + this.offset.z});
 	}
 }

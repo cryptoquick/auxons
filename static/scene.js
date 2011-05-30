@@ -5,7 +5,7 @@ var Scene = function () {
 	this.scene = "mainScene";
 	this.cam = "mainCamera";
 	this.zoomNode = "mainScale";
-	this.zoomCurr = 1.0;
+	this.zoomCurr = 3.0;
 	this.zoomIncr = 0.2;
 	this.initialized = true;
 	this.translation = {x: 0.0, y: 0.0, z: 0.0};
@@ -88,12 +88,42 @@ var Scene = function () {
 									nodes: [{
 										type: "scale",
 										id: "mainScale",
-										x: 1.0,
-										y: 1.0,
-										z: 1.0,
+										x: 3.0,
+										y: 3.0,
+										z: 3.0,
 										nodes: [{
-											type: "node",
-											id: "gridRoot"
+											type: "material",
+											id: "terrain0",
+											baseColor:		{ r: 0.7, g: 0.2, b: 0.2 },
+											specularColor:	{ r: 0.4, g: 0.4, b: 0.4 }, 
+											specular:		0.9,
+											shine:			0.5,
+											nodes: [{
+												type: "texture",
+												layers: [{
+													uri: "static/img/grid128.png",
+													minFilter: "linear",
+													magFilter: "linear",
+													wrapS: "repeat",
+													wrapT: "repeat",
+													isDepth: false,
+													depthMode:"luminance",
+													depthCompareMode: "compareRToTexture",
+													depthCompareFunc: "lequal",
+													flipY: false,
+													width: 1,
+													height: 1,
+													internalFormat:	"lequal",
+													sourceFormat:	"alpha",
+													sourceType:		"unsignedByte",
+													applyTo:		"baseColor",
+													blendMode:		"multiply"
+												}],
+												nodes: [{
+													type: "node",
+													id: "gridRoot"
+												}]
+											}]
 										},
 										{
 											type: "node",
@@ -119,7 +149,7 @@ var Scene = function () {
 	
 	this.start = function () {
 		SceneJS.withNode(this.scene).start({
-			fps: 30,
+			fps: 60,
 			idleFunc: $C.process
 		});
 	}

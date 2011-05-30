@@ -27,17 +27,28 @@ function Init () {
 	document.onkeyup = $C.key.press;
 	document.onkeydown = $C.key.press;
 	
-	// Initialize Game.
-	$C.game = new Game();
-	$C.game.init();
-	
 	$C.initialized = true;
+	$C.gameStarted = false;
 	$C.ui.resize();
 	
 	$C.process = function () {
 		$C.ui.calcFps();
-		$C.game.move();
+		if ($C.gameStarted) {
+			$C.grid.onMove();
+		}
 	}
+	
+	// Scene has to be loaded before doing game stuff.
+	SceneJS.withNode($C.scene.scene).bind("loading-status",
+		function(event) {
+			var params = event.params;
+
+			if (params.numNodesLoading == 0 && !$C.gameStarted) {
+				$C.game = new Game();
+				$C.game.init();
+				$C.gameStarted = true;
+			}
+		});
 	
 	$C.scene.start();
 	
