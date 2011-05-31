@@ -14,7 +14,18 @@ var UI = function () {
 	this.postInit = function () {
 	//	this.toolbar = new Toolbar();
 	//	this.toolbar.init();
+	//	this.initPicking();
 	}
+	
+	// Mouse Picking
+/*	this.initPicking = function () {
+		SceneJS.withNode($C.scene.name).bind("picked",
+			function(event) { // Mouse Move
+				var params = event.params;
+				//console.log(params);
+			}
+		);
+	}*/
 	
 	// This can implement 2xAA by rendering to a 2x larger canvas, then scale it down with styles.
 	this.resize = function () {

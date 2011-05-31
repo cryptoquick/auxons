@@ -2,7 +2,7 @@ var Scene = function () {
 	this.yaw = 45.0;
 	this.pitch = 26.565;
 	this.scale = 0.05;
-	this.scene = "mainScene";
+	this.name = "mainScene";
 	this.cam = "mainCamera";
 	this.zoomNode = "mainScale";
 	this.zoomCurr = 3.0;
@@ -13,7 +13,7 @@ var Scene = function () {
 	this.init = function () {
 		SceneJS.createNode({
 			type: "scene",
-			id: this.scene,
+			id: this.name,
 			canvasId: $C.canvas,
 			nodes: [{
 				type: "lookAt",
@@ -93,13 +93,14 @@ var Scene = function () {
 										z: 3.0,
 										nodes: [{
 											type: "material",
-											id: "terrain0",
 											baseColor:		{ r: 0.7, g: 0.2, b: 0.2 },
 											specularColor:	{ r: 0.4, g: 0.4, b: 0.4 }, 
 											specular:		0.9,
 											shine:			0.5,
 											nodes: [{
-												type: "texture",
+												type: "node",
+												id: "gridRoot"
+											/*	type: "texture",
 												layers: [{
 													uri: "static/img/grid128.png",
 													minFilter: "linear",
@@ -122,7 +123,7 @@ var Scene = function () {
 												nodes: [{
 													type: "node",
 													id: "gridRoot"
-												}]
+												}]*/
 											}]
 										},
 										{
@@ -148,18 +149,18 @@ var Scene = function () {
 	}
 	
 	this.start = function () {
-		SceneJS.withNode(this.scene).start({
+		SceneJS.withNode(this.name).start({
 			fps: 60,
 			idleFunc: $C.process
 		});
 	}
 	
 	this.stop = function () {
-		SceneJS.withNode(this.scene).stop();
+		SceneJS.withNode(this.name).stop();
 	}
 	
 	this.render = function () {
-		SceneJS.withNode(this.scene).render();
+		SceneJS.withNode(this.name).render();
 	}
 	
 	this.rotate = function (rx, ry, rz) {

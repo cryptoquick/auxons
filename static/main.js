@@ -39,7 +39,7 @@ function Init () {
 	}
 	
 	// Scene has to be loaded before doing game stuff.
-	SceneJS.withNode($C.scene.scene).bind("loading-status",
+	SceneJS.withNode($C.scene.name).bind("loading-status",
 		function(event) {
 			var params = event.params;
 

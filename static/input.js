@@ -37,7 +37,8 @@ var Mouse = function () {
 		this.last = {x: evt.clientX, y: evt.clientY};
 		this.dragging = true;
 		this.clicked = true;
-	//	SceneJS.withNode($C.canvas).pick(evt.clientX, evt.clientY);
+		// Grid Click
+		SceneJS.withNode($C.scene.name).pick(evt.clientX, evt.clientY);
 	}
 	
 	this.up = function () {
@@ -65,6 +66,10 @@ var Mouse = function () {
 			$C.scene.translate($C.scene.translation.x, $C.scene.translation.y, 0.0);
 			this.last.x = evt.clientX;
 			this.last.y = evt.clientY;
+		}
+		// Grid Hover
+		if (!this.dragging) {
+			SceneJS.withNode($C.scene.name).pick(evt.clientX, evt.clientY);
 		}
 	}
 	

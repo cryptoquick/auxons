@@ -8,14 +8,16 @@ var Game = function () {
 var Grid = function () {
 	this.terrains = {};
 	this.curIndex = 0;
-	this.terrainSize = {rows: 16, cols: 16};
+	this.terrainSize = {rows: 8, cols: 8};
 	this.lastPos = {x: 0.0, y: 0.0};
 	
 	this.init = function () {
 		this.addTerrain(0,0);
 		this.populateTerrain(0,0);
+		this.addPicking();
 	}
 	
+	/* Building Terrain */
 	this.getPos = function (tx, tz) {
 		var results;
 		var query = new SceneJS.utils.query.QueryNodePos({
@@ -96,10 +98,9 @@ var Grid = function () {
 	}
 	
 	this.checkDir = function (dirPos, dirX, dirY) {
-		console.log(dirPos, dirX, dirY);
 		var coors = this.gridCoors(dirX, dirY);
 		if ((dirPos.x > 0.0 && dirPos.x < $C.ui.window.width + 200) &&
-			(dirPos.y > -100.0 && dirPos.y < $C.ui.window.height + 200)) {
+			(dirPos.y > -200.0 && dirPos.y < $C.ui.window.height + 200)) {
 			this.populateTerrain(dirX, dirY);
 		}
 	}
@@ -113,6 +114,19 @@ var Grid = function () {
 		}
 		else {
 			return false;
+		}
+	}
+	
+	/* Mouse Picking */
+	this.addPicking = function () {
+		for (t in this.terrains) {
+			console.log(t.nodeID);
+		/*	SceneJS.withNode(t.nodeID).bind("picked",
+				function(event) { // Mouse Move
+					var params = event.params;
+					console.log(t.nodeID);
+				}
+			);*/
 		}
 	}
 }
@@ -141,6 +155,7 @@ var Terrain = function () {
 		
 		this.makeVertices();
 		this.makeIndices();
+		this.makeNormals();
 		this.makeObject();
 		this.addObject();
 		this.centerObject();
@@ -174,12 +189,22 @@ var Terrain = function () {
 	}
 	
 	// Calculates normals, but unsure if this is the proper way to do it.
-	this.calcNormal = function (x, y, z) {
-		n = {x: 0.0, y: 0.0, z: 0.0};
-		n.x = y * z - z * y;
-		n.y = z * x - x * z;
-		n.z = x * y - y * x;
-		return n;
+	this.calcNormal = function (i) {
+		var p = vec3.create([this.vertices[i],this.vertices[i+1],this.vertices[i+2]]);
+		var s = vec3.create([this.vertices[i+3],this.vertices[i+4],this.vertices[i+5]]);
+		var t = vec3.create([this.vertices[i+6],this.vertices[i+7],this.vertices[i+8]]);
+		s = vec3.subtract(s, p);
+		t = vec3.subtract(t, p);
+		var n = vec3.cross(s, t);
+		n = vec3.normalize(n);
+		return {x: n[0], y: n[1], z: n[2]};
+	}
+	
+	this.makeNormals = function () {
+		for (var i = 0, ii = this.vertices.length; i < ii; i += 3) {
+			var result = this.calcNormal(i);
+			this.normals.push(result.x, result.y, result.z);
+		}
 	}
 	
 	this.makeVertices = function () {
@@ -187,8 +212,6 @@ var Terrain = function () {
 			for (var col = 0; col <= this.width; col++) {
 				var v = {x: col, y: this.map[col][row], z: row};
 				this.vertices.push(v.x, v.y, v.z);
-				var n = this.calcNormal(v.x, v.y, v.z);
-				this.normals.push(n.x, n.y, n.z); // Change into a proper normals calculation.
 			}
 		}
 	}
@@ -227,7 +250,7 @@ var Terrain = function () {
 				primitive: "triangle-strip",
 				positions: this.vertices,
 				normals: this.normals,
-				uv: this.uv,
+			//	uv: this.uv,
 				indices: this.indices
 			}]
 		}
