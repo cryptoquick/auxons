@@ -95,8 +95,8 @@ var Grid = function () {
 	this.checkDir = function (dirPos, dirX, dirY) {
 		var coors = this.gridCoors(dirX, dirY);
 	//	if (!this.checkExists(coors.x, coors.y)) {
-			if ((dirPos.x > 0.0 && dirPos.x < $C.ui.window.width) &&
-				(dirPos.y > 0.0 && dirPos.y < $C.ui.window.height)) {
+			if ((dirPos.x > 0.0 && dirPos.x < $C.ui.window.width + 200) &&
+				(dirPos.y > -100.0 && dirPos.y < $C.ui.window.height + 200)) {
 				this.populateTerrain(dirX, dirY);
 			}
 	//	}
@@ -134,8 +134,8 @@ var Terrain = function () {
 		this.offset.x = offsetX;
 		this.offset.z = offsetZ;
 		this.nodeID = name;
-		
-		this.makeMap();
+	//	console.log(this.offset.x);
+		this.makeMapNoise();
 		
 		this.makeVertices();
 		this.makeIndices();
@@ -153,6 +153,27 @@ var Terrain = function () {
 		}
 	}
 	
+	this.makeMapNoise = function () {
+		var scale = 25.0;
+		var factor = 0.025;
+		var yOffset = -25;
+		noiseDetail(4, 0.70); // octaves, fallout
+		noiseSeed(123);
+		
+		for (var x = 0; x <= this.width; x++) {
+	//	for (var x = this.width; x >= 0; x--) {
+			this.map[x] = new Array();
+			for (var y = 0; y <= this.height; y++) {
+		//	for (var y = this.height; y >= 0; y--) {
+				this.map[x][y] = noise(
+					(x + this.offset.x) * factor,
+					(y + this.offset.z) * factor
+				) * scale + yOffset;
+			}
+		}
+	//	console.log(this.map[5][5]);
+	}
+	
 	// Calculates normals, but unsure if this is the proper way to do it.
 	this.calcNormal = function (x, y, z) {
 		n = {x: 0.0, y: 0.0, z: 0.0};
@@ -165,7 +186,7 @@ var Terrain = function () {
 	this.makeVertices = function () {
 		for (var row = 0; row <= this.height; row++) {
 			for (var col = 0; col <= this.width; col++) {
-				var v = {x: col, y: this.map[row][col], z: row};
+				var v = {x: col, y: this.map[col][row], z: row};
 				this.vertices.push(v.x, v.y, v.z);
 				var n = this.calcNormal(v.x, v.y, v.z);
 				this.normals.push(n.x, n.y, n.z); // Change into a proper normals calculation.
