@@ -32,6 +32,9 @@ var Grid = function () {
 	this.onMove = function () {
 		var pos = $C.grid.getPos(0,0);
 		if ((pos.x != $C.grid.lastPos.x) || (pos.y != $C.grid.lastPos.y)) {
+			// Add more terrain as the player translates the grid.
+		//	this.checkDir(this.lastPos, );
+			
 		//	console.log("Terrain center is now: " + pos.x + ", " + pos.y);
 			$C.grid.lastPos.x = pos.x;
 			$C.grid.lastPos.y = pos.y;
@@ -93,13 +96,12 @@ var Grid = function () {
 	}
 	
 	this.checkDir = function (dirPos, dirX, dirY) {
+		console.log(dirPos, dirX, dirY);
 		var coors = this.gridCoors(dirX, dirY);
-	//	if (!this.checkExists(coors.x, coors.y)) {
-			if ((dirPos.x > 0.0 && dirPos.x < $C.ui.window.width + 200) &&
-				(dirPos.y > -100.0 && dirPos.y < $C.ui.window.height + 200)) {
-				this.populateTerrain(dirX, dirY);
-			}
-	//	}
+		if ((dirPos.x > 0.0 && dirPos.x < $C.ui.window.width + 200) &&
+			(dirPos.y > -100.0 && dirPos.y < $C.ui.window.height + 200)) {
+			this.populateTerrain(dirX, dirY);
+		}
 	}
 	
 	this.addTerrain = function (gridX, gridY) {
@@ -134,7 +136,7 @@ var Terrain = function () {
 		this.offset.x = offsetX;
 		this.offset.z = offsetZ;
 		this.nodeID = name;
-	//	console.log(this.offset.x);
+		
 		this.makeMapNoise();
 		
 		this.makeVertices();
@@ -154,24 +156,21 @@ var Terrain = function () {
 	}
 	
 	this.makeMapNoise = function () {
-		var scale = 25.0;
-		var factor = 0.025;
+		var scale = 25.0; // vertical scale of terrain
+		var factor = 0.025; // sample distance, affects smoothness of terrain
 		var yOffset = -25;
 		noiseDetail(4, 0.70); // octaves, fallout
 		noiseSeed(123);
 		
 		for (var x = 0; x <= this.width; x++) {
-	//	for (var x = this.width; x >= 0; x--) {
 			this.map[x] = new Array();
 			for (var y = 0; y <= this.height; y++) {
-		//	for (var y = this.height; y >= 0; y--) {
 				this.map[x][y] = noise(
 					(x + this.offset.x) * factor,
 					(y + this.offset.z) * factor
 				) * scale + yOffset;
 			}
 		}
-	//	console.log(this.map[5][5]);
 	}
 	
 	// Calculates normals, but unsure if this is the proper way to do it.
