@@ -120,7 +120,7 @@ var Grid = function () {
 	/* Mouse Picking */
 	this.addPicking = function () {
 		for (t in this.terrains) {
-			console.log(t.nodeID);
+		//	console.log(t.nodeID);
 		/*	SceneJS.withNode(t.nodeID).bind("picked",
 				function(event) { // Mouse Move
 					var params = event.params;
@@ -140,6 +140,7 @@ var Terrain = function () {
 	this.indices = [];
 	this.normals = [];
 	this.uv = [];
+	this.colors = [];
 	this.uvSize = 2;
 	this.obj;
 	this.nodeID = "";
@@ -156,9 +157,12 @@ var Terrain = function () {
 		this.makeVertices();
 		this.makeIndices();
 		this.makeNormals();
+		this.makeColors();
 		this.makeObject();
 		this.addObject();
 		this.centerObject();
+		
+	//	console.log(this.vertices.length + " vertices", this.indices.length + " indices", this.normals.length + " normals", this.uv.length + " uvs");
 	}
 	
 	this.makeMap = function () {
@@ -242,6 +246,65 @@ var Terrain = function () {
 		}
 	}
 	
+	this.makeColors = function () {
+		var scale = 25.0; // vertical scale of terrain
+		var factor = 0.025; // sample distance, affects smoothness of terrain
+		var yFactor = 0.025;
+		var yOffset = -25;
+		noiseDetail(4, 0.70); // octaves, fallout
+		noiseSeed(123);
+		var colors = [];
+		
+		for (var x = 0; x <= this.width; x++) {
+			for (var y = 0; y <= this.length; y++) {
+				var color = noise(
+					(x + this.offset.x) * factor,
+					(y + this.offset.z) * factor,
+					this.map[x][y] * yFactor
+				) * scale + yOffset;
+				colors.push(color);
+			}
+		}
+		
+		// Must be sufficiently large values;
+		var min = 100.0;
+		var max = -100.0;
+		
+		for (var i = 0, ii = colors.length; i < ii; i++) {
+			if (colors[i] < min) {
+				min = colors[i];
+			}
+			if (colors[i] > max) {
+				max = colors[i];
+			}
+		}
+		
+		var range = max - min;
+		
+	//	console.log(min, max);
+		
+		for (var i = 0, ii = colors.length; i < ii; i++) {
+			colors[i] = (colors[i] - min) / range;
+		}
+		
+		for (var i = 0, ii = colors.length; i < ii; i++) {
+			if (colors[i] < 0.25) {
+				this.colors.push(1.0, 0.0, 0.0);
+			}
+			else if (colors[i] < 0.50) {
+				this.colors.push(0.0, 1.0, 0.0);
+			}
+			else if (colors[i] < 0.75) {
+				this.colors.push(0.0, 0.0, 1.0);
+			}
+			else if (colors[i] <= 1.0) {
+				this.colors.push(1.0, 1.0, 0.0);
+			}
+		}
+		
+	//	console.log(colors.length, this.colors.length);
+	}
+	
 	this.makeObject = function () {
 		this.obj = {
 			type: "translate",
@@ -255,7 +318,8 @@ var Terrain = function () {
 				positions: this.vertices,
 				normals: this.normals,
 			//	uv: this.uv,
-				indices: this.indices
+				indices: this.indices,
+				colors: this.colors
 			}]
 		}
 	}
