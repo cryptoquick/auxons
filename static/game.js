@@ -133,7 +133,7 @@ var Grid = function () {
 
 var Terrain = function () {
 	this.width = 0;
-	this.height = 0;
+	this.length = 0;
 	this.offset = {x: 0.0, y: 0.0, z: 0.0};
 	this.map = [];
 	this.vertices = [];
@@ -144,9 +144,9 @@ var Terrain = function () {
 	this.obj;
 	this.nodeID = "";
 	
-	this.init = function (width, height, offsetX, offsetZ, name) {
+	this.init = function (width, length, offsetX, offsetZ, name) {
 		this.width = width;
-		this.height = height;
+		this.length = length;
 		this.offset.x = offsetX;
 		this.offset.z = offsetZ;
 		this.nodeID = name;
@@ -164,7 +164,7 @@ var Terrain = function () {
 	this.makeMap = function () {
 		for (var x = 0; x <= this.width; x++) {
 			this.map[x] = new Array();
-			for (var y = 0; y <= this.height; y++) {
+			for (var y = 0; y <= this.length; y++) {
 				this.map[x][y] = Math.random();
 			}
 		}
@@ -179,7 +179,7 @@ var Terrain = function () {
 		
 		for (var x = 0; x <= this.width; x++) {
 			this.map[x] = new Array();
-			for (var y = 0; y <= this.height; y++) {
+			for (var y = 0; y <= this.length; y++) {
 				this.map[x][y] = noise(
 					(x + this.offset.x) * factor,
 					(y + this.offset.z) * factor
@@ -190,13 +190,17 @@ var Terrain = function () {
 	
 	// Calculates normals, but unsure if this is the proper way to do it.
 	this.calcNormal = function (i) {
+		if (i > this.vertices.length - 9) {
+			i = (this.vertices.length - 10);
+		}
+		
 		var p = vec3.create([this.vertices[i],this.vertices[i+1],this.vertices[i+2]]);
 		var s = vec3.create([this.vertices[i+3],this.vertices[i+4],this.vertices[i+5]]);
 		var t = vec3.create([this.vertices[i+6],this.vertices[i+7],this.vertices[i+8]]);
-		s = vec3.subtract(s, p);
-		t = vec3.subtract(t, p);
-		var n = vec3.cross(s, t);
-		n = vec3.normalize(n);
+		var q = vec3.subtract(p, s);
+		var r = vec3.subtract(s, t);
+		var n = vec3.cross(q, r);
+			n = vec3.normalize(n);
 		return {x: n[0], y: n[1], z: n[2]};
 	}
 	
@@ -208,7 +212,7 @@ var Terrain = function () {
 	}
 	
 	this.makeVertices = function () {
-		for (var row = 0; row <= this.height; row++) {
+		for (var row = 0; row <= this.length; row++) {
 			for (var col = 0; col <= this.width; col++) {
 				var v = {x: col, y: this.map[col][row], z: row};
 				this.vertices.push(v.x, v.y, v.z);
@@ -218,7 +222,7 @@ var Terrain = function () {
 	
 	this.makeIndices = function () {
 		var wpo = this.width+1;
-		for (var row = 0; row < this.height; row++) {
+		for (var row = 0; row < this.length; row++) {
 			if(row % 2 == 0) {
 				for (var col = 0; col <= this.width; col++) {
 					this.indices.push(row * wpo + col);
@@ -261,6 +265,6 @@ var Terrain = function () {
 	}
 	
 	this.centerObject = function () {
-		SceneJS.withNode(this.nodeID).set({x: -this.width / 2 + this.offset.x, y: this.offset.y, z: -this.height / 2 + this.offset.z});
+		SceneJS.withNode(this.nodeID).set({x: -this.width / 2 + this.offset.x, y: this.offset.y, z: -this.length / 2 + this.offset.z});
 	}
 }
