@@ -8,7 +8,7 @@ var Game = function () {
 var Grid = function () {
 	this.terrains = {};
 	this.curIndex = 0;
-	this.terrainSize = {rows: 8, cols: 8};
+	this.terrainSize = {rows: 16, cols: 16};
 	this.lastPos = {x: 0.0, y: 0.0};
 	
 	this.init = function () {
@@ -194,9 +194,9 @@ var Terrain = function () {
 	
 	// Calculates normals, but unsure if this is the proper way to do it.
 	this.calcNormal = function (i) {
-		if (i > this.vertices.length - 9) {
+	/*	if (i > this.vertices.length - 9) {
 			i = (this.vertices.length - 10);
-		}
+		}*/
 		
 		var p = vec3.create([this.vertices[i],this.vertices[i+1],this.vertices[i+2]]);
 		var s = vec3.create([this.vertices[i+3],this.vertices[i+4],this.vertices[i+5]]);
@@ -205,6 +205,23 @@ var Terrain = function () {
 		var r = vec3.subtract(s, t);
 		var n = vec3.cross(q, r);
 			n = vec3.normalize(n);
+		
+		// Kludges to get rid of the circuit-board pattern and other artifacts.
+		// FIXME
+		if (n[0] != 1 || n[0] != 0)
+			n[0] = Math.ceil(Math.abs(n[0]));
+		if (n[1] != 1 || n[0] != 0)
+			n[1] = Math.ceil(Math.abs(n[1]));
+		if (n[2] != 1 || n[0] != 0)
+			n[2] = Math.ceil(Math.abs(n[2]));
+		
+		if (n[0] == 0 && n[1] == 0 && n[2] == 0)
+			n[2] = 1;
+		
+		if (n[0] == 1 && n[1] == 1 && n[2] == 1)
+			n[0] = 0;
+			n[1] = 0;
+		
 		return {x: n[0], y: n[1], z: n[2]};
 	}
 	
@@ -320,8 +337,8 @@ var Terrain = function () {
 				positions: this.vertices,
 				indices: this.indices,
 				normals: this.normals,
-				uv: this.uv,
-				colors: this.colors
+				uv: this.uv
+			//	colors: this.colors
 			}]
 		}
 	}
