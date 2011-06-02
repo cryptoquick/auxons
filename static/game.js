@@ -162,7 +162,7 @@ var Terrain = function () {
 		this.addObject();
 		this.centerObject();
 		
-		console.log(this.vertices.length + " vertices", this.indices.length + " indices", this.normals.length + " normals", this.uv.length + " uvs", this.colors.length + " colors");
+	//	console.log(this.vertices.length + " vertices", this.indices.length + " indices", this.normals.length + " normals", this.uv.length + " uvs", this.colors.length + " colors");
 	}
 	
 	this.makeMap = function () {
@@ -194,10 +194,6 @@ var Terrain = function () {
 	
 	// Calculates normals, but unsure if this is the proper way to do it.
 	this.calcNormal = function (i) {
-	/*	if (i > this.vertices.length - 9) {
-			i = (this.vertices.length - 10);
-		}*/
-		
 		var p = vec3.create([this.vertices[i],this.vertices[i+1],this.vertices[i+2]]);
 		var s = vec3.create([this.vertices[i+3],this.vertices[i+4],this.vertices[i+5]]);
 		var t = vec3.create([this.vertices[i+6],this.vertices[i+7],this.vertices[i+8]]);
@@ -268,59 +264,83 @@ var Terrain = function () {
 		var scale = 25.0; // vertical scale of terrain
 		var factor = 0.025; // sample distance, affects smoothness of terrain
 		var yFactor = 0.025;
-		var yOffset = -25;
+		var yOffset = -20;
 		noiseDetail(4, 0.70); // octaves, fallout
 		noiseSeed(123);
 		var colors = [];
+		var temp = [];
+		
+		for (var x = 0; x <= this.width; x++) {
+			temp[x] = new Array();
+			for (var y = 0; y <= this.length; y++) {
+				temp[x][y] = noise(
+					(x + this.offset.x) * factor,
+					(y + this.offset.z) * factor
+				) * scale + yOffset;
+			}
+		}
+		
+	/*	for (var x = 0; x <= this.width; x++) {
+	//	for (var x = this.width; x >= 0; x--) {
+			for (var y = 0; y <= this.length; y++) {
+		//	for (var y = this.width; y >= 0; y--) {
+				var color = noise(
+					(x + this.offset.x) * factor,
+					(y + this.offset.z) * factor
+				) * scale + yOffset;
+			//	var color = this.map[y][x];
+				colors.push(color);
+			}
+		}*/
 		
 		for (var x = 0; x <= this.width; x++) {
 			for (var y = 0; y <= this.length; y++) {
-				var color = noise(
-					(x + this.offset.x) * factor,
-					(y + this.offset.z) * factor,
-					this.map[x][y] * yFactor
-				) * scale + yOffset;
-				colors.push(color);
+				colors.push(temp[y][x]);
 			}
 		}
 		
 		// Must be sufficiently large values;
-		var min = 100.0;
-		var max = -100.0;
+		var min = 10.0;
+		var max = -10.0;
 		
-		for (var i = 0, ii = colors.length; i < ii; i++) {
+	/*	for (var i = 0, ii = colors.length; i < ii; i++) {
 			if (colors[i] < min) {
 				min = colors[i];
 			}
 			if (colors[i] > max) {
 				max = colors[i];
 			}
-		}
+		}*/
 		
 		var range = max - min;
 		
-	//	console.log(min, max);
+		console.log(min, max);
 		
 		for (var i = 0, ii = colors.length; i < ii; i++) {
 			colors[i] = (colors[i] - min) / range;
 		}
 		
+		// Colors, going top -> down.
 		for (var i = 0, ii = colors.length; i < ii; i++) {
-			if (colors[i] < 0.25) {
-				this.colors.push(1.0, 0.0, 0.0, 1.0);
+			if (colors[i] < 0.20) {
+				this.colors.push(1.0, 1.0, 1.0, 1.0);
 			}
-			else if (colors[i] < 0.50) {
+			else if (colors[i] < 0.40) {
+				this.colors.push(0.275, 0.1, 0.0, 1.0);
+			}
+			else if (colors[i] < 0.60) {
 				this.colors.push(0.0, 1.0, 0.0, 1.0);
 			}
 			else if (colors[i] < 0.75) {
-				this.colors.push(0.0, 0.0, 1.0, 1.0);
-			}
-			else if (colors[i] <= 1.0) {
 				this.colors.push(1.0, 1.0, 0.0, 1.0);
 			}
+			else if (colors[i] < 1.0) {
+				this.colors.push(0.0, 0.0, 1.0, 1.0);
+			}
+			else if (colors[i] >= 1.0) {
+				this.colors.push(1.0, 0.0, 1.0, 1.0);
+			}
 		}
-		
-	//	console.log(colors.length, this.colors.length);
 	}
 	
 	this.makeObject = function () {
@@ -333,12 +353,11 @@ var Terrain = function () {
 			nodes: [{
 				type: "geometry",
 				primitive: "triangle-strip",
-			//	primitive: "triangles",
 				positions: this.vertices,
 				indices: this.indices,
 				normals: this.normals,
-				uv: this.uv
-			//	colors: this.colors
+				uv: this.uv,
+				colors: this.colors
 			}]
 		}
 	}
