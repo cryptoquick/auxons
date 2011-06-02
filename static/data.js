@@ -16,4 +16,6 @@ var Data = function () {
 	this.scene = {
 		initialized: false
 	}
+	
+	this.polygons = 0;
 }

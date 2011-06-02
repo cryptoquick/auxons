@@ -162,7 +162,7 @@ var Terrain = function () {
 		this.addObject();
 		this.centerObject();
 		
-	//	console.log(this.vertices.length + " vertices", this.indices.length + " indices", this.normals.length + " normals", this.uv.length + " uvs");
+		console.log(this.vertices.length + " vertices", this.indices.length + " indices", this.normals.length + " normals", this.uv.length + " uvs", this.colors.length + " colors");
 	}
 	
 	this.makeMap = function () {
@@ -220,6 +220,7 @@ var Terrain = function () {
 			for (var col = 0; col <= this.width; col++) {
 				var v = {x: col, y: this.map[col][row], z: row};
 				this.vertices.push(v.x, v.y, v.z);
+				this.uv.push(row, col);
 			}
 		}
 	}
@@ -230,17 +231,17 @@ var Terrain = function () {
 			if(row % 2 == 0) {
 				for (var col = 0; col <= this.width; col++) {
 					this.indices.push(row * wpo + col);
-					this.uv.push(0,0);
+				//	this.uv.push(0,0);
 					this.indices.push((row+ 1) * wpo + col);
-					this.uv.push(0,0);
+				//	this.uv.push(0,0);
 				}
 			}
 			else {
 				for (var col = this.width; col >= 0; col--) {
 					this.indices.push(row * wpo + col);
-					this.uv.push(this.uvSize, this.uvSize);
+				//	this.uv.push(this.uvSize, this.uvSize);
 					this.indices.push((row+1) * wpo + col);
-					this.uv.push(this.uvSize, this.uvSize);
+				//	this.uv.push(this.uvSize, this.uvSize);
 				}
 			}
 		}
@@ -289,16 +290,16 @@ var Terrain = function () {
 		
 		for (var i = 0, ii = colors.length; i < ii; i++) {
 			if (colors[i] < 0.25) {
-				this.colors.push(1.0, 0.0, 0.0);
+				this.colors.push(1.0, 0.0, 0.0, 1.0);
 			}
 			else if (colors[i] < 0.50) {
-				this.colors.push(0.0, 1.0, 0.0);
+				this.colors.push(0.0, 1.0, 0.0, 1.0);
 			}
 			else if (colors[i] < 0.75) {
-				this.colors.push(0.0, 0.0, 1.0);
+				this.colors.push(0.0, 0.0, 1.0, 1.0);
 			}
 			else if (colors[i] <= 1.0) {
-				this.colors.push(1.0, 1.0, 0.0);
+				this.colors.push(1.0, 1.0, 0.0, 1.0);
 			}
 		}
 		
@@ -315,10 +316,11 @@ var Terrain = function () {
 			nodes: [{
 				type: "geometry",
 				primitive: "triangle-strip",
+			//	primitive: "triangles",
 				positions: this.vertices,
-				normals: this.normals,
-			//	uv: this.uv,
 				indices: this.indices,
+				normals: this.normals,
+				uv: this.uv,
 				colors: this.colors
 			}]
 		}
