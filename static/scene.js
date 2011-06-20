@@ -46,7 +46,7 @@ var Scene = function () {
 							specular: true,
 							dir: {x: -1.0, y: -1.0, z: -1.0}
 						},
-						{
+					/*	{
 							type: "light",
 							mode: "dir",
 							color: {r: 0.9, g: 0.9, b: 0.9},
@@ -69,7 +69,7 @@ var Scene = function () {
 							diffuse: true,
 							specular: true,
 							dir: {x: 1.0, y: 0.0, z: -1.0}
-						},
+						},*/
 						{
 							type: "rotate",
 							id: "pitch",

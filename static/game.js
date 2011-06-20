@@ -194,31 +194,56 @@ var Terrain = function () {
 	
 	// Calculates normals, but unsure if this is the proper way to do it.
 	this.calcNormal = function (i) {
-		var p = vec3.create([this.vertices[i],this.vertices[i+1],this.vertices[i+2]]);
-		var s = vec3.create([this.vertices[i+3],this.vertices[i+4],this.vertices[i+5]]);
-		var t = vec3.create([this.vertices[i+6],this.vertices[i+7],this.vertices[i+8]]);
+	/*	var d = 0.0001;
+		var p = vec3.create([this.vertices[i] + d,this.vertices[i+1] + d,this.vertices[i+2] + d]);
+		var s = vec3.create([this.vertices[i+3] + d,this.vertices[i+4] + d,this.vertices[i+5] + d]);
+		var t = vec3.create([this.vertices[i+6] + d,this.vertices[i+7] + d,this.vertices[i+8] + d]);
 		var q = vec3.subtract(p, s);
 		var r = vec3.subtract(s, t);
 		var n = vec3.cross(q, r);
 			n = vec3.normalize(n);
+		*/
+		
+		v1 = [this.vertices[i+0], this.vertices[i+1], this.vertices[i+2]];
+		v2 = [this.vertices[i+3], this.vertices[i+4], this.vertices[i+5]];
+		v3 = [this.vertices[i+6], this.vertices[i+7], this.vertices[i+8]];
+		
+		Qx = v2[0] - v1[0];
+		Qy = v2[1] - v1[1];
+		Qz = v2[2] - v1[2];
+		Px = v3[0] - v1[0];
+		Py = v3[1] - v1[1];
+		Pz = v3[2] - v1[2];
+		
+		var n = {};
+		n.x = Py * Qz - Pz * Qy;
+		n.y = Pz * Qx - Px * Qz;
+		n.z = Px * Qy - Py * Qx;
 		
 		// Kludges to get rid of the circuit-board pattern and other artifacts.
 		// FIXME
-		if (n[0] != 1 || n[0] != 0)
-			n[0] = Math.ceil(Math.abs(n[0]));
-		if (n[1] != 1 || n[0] != 0)
-			n[1] = Math.ceil(Math.abs(n[1]));
-		if (n[2] != 1 || n[0] != 0)
-			n[2] = Math.ceil(Math.abs(n[2]));
+		if (n.x < 0.0)
+			n.x = -n.x;
+		if (n.y < 0.0)
+			n.y = -n.y;
+		if (n.z < 0.0)
+			n.z = -n.z;
 		
-		if (n[0] == 0 && n[1] == 0 && n[2] == 0)
-			n[2] = 1;
+		if (n.x == 0 && n.y == 0 && n.z == 0)
+			n.z = 1;
 		
-		if (n[0] == 1 && n[1] == 1 && n[2] == 1)
-			n[0] = 0;
-			n[1] = 0;
+		if (n.x == 1 && n.y == 1 && n.z == 1) {
+			n.x = 0;
+		}
 		
-		return {x: n[0], y: n[1], z: n[2]};
+		if (isNaN(n.x))
+			n.x = 1;
+		if (isNaN(n.y))
+			n.y = 1;
+		if (isNaN(n.z))
+			n.z = 1;
+		
+		return n;
 	}
 	
 	this.makeNormals = function () {
@@ -226,6 +251,7 @@ var Terrain = function () {
 			var result = this.calcNormal(i);
 			this.normals.push(result.x, result.y, result.z);
 		}
+		console.log(this.normals.slice(this.normals.length - 33,this.normals.length-1));
 	}
 	
 	this.makeVertices = function () {
@@ -314,7 +340,7 @@ var Terrain = function () {
 		
 		var range = max - min;
 		
-		console.log(min, max);
+	//	console.log(min, max);
 		
 		for (var i = 0, ii = colors.length; i < ii; i++) {
 			colors[i] = (colors[i] - min) / range;
